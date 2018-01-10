@@ -13,7 +13,10 @@ func main() {
 	pkgs := gonite.GetPkgsFromJson()
 	for _, p := range pkgs {
 		log.Printf("Downloading: %v", p.Exe)
-		gonite.DownloadFile(p.Exe, p.Url)
+		err := gonite.DownloadFile(p.Exe, p.Url)
+		if err != nil {
+			log.Fatal(err)
+		}
 		log.Printf("Download Complete")
 	}
 }
