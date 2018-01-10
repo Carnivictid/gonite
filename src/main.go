@@ -1,12 +1,4 @@
-/* Gonite main package.
-=============================
-*make an arg: gonite.exe -i jsonname to run custom json
-chatmansam.com/gonite
-This downloads the exe
-Exe runs, gets chatmansam.com/gonite/json.json to get updated json
-downloads the files and installs them
-Spits out a report of what happened
-*/
+// main package for gonite
 
 package main
 
@@ -16,6 +8,8 @@ import (
 )
 
 func main() {
-	log.Println("Test log.")
-	gonite.TestFunc()
+	pkgs := gonite.GetPkgsFromJson()
+	for _, p := range pkgs {
+		log.Printf("Exe: %v | Url: %v | Flg: %v\n", p.Exe, p.Url, p.Flg)
+	}
 }

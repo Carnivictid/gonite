@@ -1,1 +1,12 @@
-// JSON
+[
+	{
+		"exe": "fuck.exe",
+		"url": "http://fuck",
+		"flg": "/q"
+	},
+	{
+		"exe": "poop.exe",
+		"url": "http://poop",
+		"flg": "/g"
+	}
+]
