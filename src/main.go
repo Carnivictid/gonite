@@ -8,8 +8,12 @@ import (
 )
 
 func main() {
+	// pkgs is an array of structs
+	// Exe `json:"exe"`, Url `json:"url"`, Flg `json:"flg"`
 	pkgs := gonite.GetPkgsFromJson()
 	for _, p := range pkgs {
-		log.Printf("Exe: %v | Url: %v | Flg: %v\n", p.Exe, p.Url, p.Flg)
+		log.Printf("Downloading: %v", p.Exe)
+		gonite.DownloadFile(p.Exe, p.Url)
+		log.Printf("Download Complete")
 	}
 }
