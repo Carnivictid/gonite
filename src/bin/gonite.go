@@ -2,29 +2,39 @@ package gonite
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
-	"os/exec"
-	"log"
 	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
+	"os/exec"
 )
 
 type Pkg struct {
-    Exe string `json:"exe"`
-    Url string `json:"url"`
-    Flg string `json:"flg"`
+	Exe string `json:"exe"`
+	Url string `json:"url"`
+	Flg string `json:"flg"`
 }
 
 //a little better practice than inline strings
-const exeDir string = "C:/temp/"
+const exeDir string = "C:/temp/gonite/"
 const fileExt string = ".exe"
+const jsonUrl string = "https://raw.githubusercontent.com/Carnivictid/gonite/master/src/bin/squires.json"
 
+func GetNewJson() ([]byte, error) {
+	log.Println("JSON could not be found, getting a new one.")
+	jsonPkg := Pkg{"squires.json", jsonUrl, ""}
+	jsonChan := make(chan Pkg, 1)
+	go DownloadFile(jsonPkg, jsonChan, true)
+	_ = <-jsonChan
+	return ioutil.ReadFile(exeDir + "squires.json")
+}
 
 func GetPkgsFromJson() []Pkg {
-	raw, err := ioutil.ReadFile("./bin/squires.json")
+	// json is misspelled to mimick an issue with the file.
+	raw, err := ioutil.ReadFile("./bin/squires1.json")
 	if err != nil {
-		log.Fatal(err) // TODO add code to download json from git repo
+		raw, err = GetNewJson()
 	}
 
 	var c []Pkg
@@ -36,13 +46,17 @@ func GetPkgsFromJson() []Pkg {
 }
 
 // Pass it the package and a channel to report to once its downloaded.
-func DownloadFile(pack Pkg, downloads chan Pkg) {
+func DownloadFile(pack Pkg, downloads chan Pkg, json bool) {
+	fExt := fileExt
+	if json {
+		fExt = ""
+	}
 	// check if download dir exists, create it if not
 	if _, err := os.Stat(exeDir); os.IsNotExist(err) {
 		os.Mkdir(exeDir, 0777)
 	}
 	// create a blank file named "filename"
-	out, err := os.Create(exeDir + pack.Exe + fileExt)
+	out, err := os.Create(exeDir + pack.Exe + fExt)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +82,7 @@ func DownloadFile(pack Pkg, downloads chan Pkg) {
 func RunExe(exe string, flg string) {
 	os.Chdir(exeDir) // TODO gotta be a better way to do this
 
-	err := exec.Command(exe + fileExt, flg).Run()
+	err := exec.Command(exe+fileExt, flg).Run()
 	if err != nil {
 		log.Fatal(err)
 	}

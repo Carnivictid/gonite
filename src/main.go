@@ -18,7 +18,7 @@ func main() {
 	for _, p := range pkgs {
 		log.Printf("Starting Download for: %v", p.Exe)
 		// spin off each one so downloads happen concurrently
-		go gonite.DownloadFile(p, downloads)
+		go gonite.DownloadFile(p, downloads, false)
 	}
 	// As values come into the downloads channel, they start downloading.
 	// This blocks until a value is received, so installs happen
