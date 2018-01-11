@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os/exec"
 	"log"
 	"io"
 	"os"
@@ -59,4 +60,13 @@ func DownloadFile(pack Pkg, downloads chan Pkg) {
 	}
 	//send the package to downloads channel, indicating its done dowloading
 	downloads <- pack
+	log.Printf("%v has finished downloading.", pack.Exe)
+}
+
+func RunExe(exe string, flg string) {
+	os.Chdir(exeDir) // gotta be a better way to do this
+	err := exec.Command(exe + fExtension, flg).Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -5,8 +5,8 @@ package main
 import (
 	"log"
 	"./bin"
-	"os/exec"
-	"os"
+	//"os/exec"
+	//"os"
 )
 
 func main() {
@@ -27,12 +27,8 @@ func main() {
 	//in the order in which they finished downloading.
 	for i := 0; i < len(pkgs); i++ {
 		e := <- downloads
-		RunExe(e.Exe, e.Flg)
+		log.Printf("%v has begun installing.", e.Exe)
+		gonite.RunExe(e.Exe, e.Flg)
 		log.Printf("%v has finished installing.", e.Exe)
 	}
-}
-
-func RunExe(exe string, flg string) {
-	os.Chdir("C:/temp/") // files are saved in temp.
-	exec.Command(exe + ".exe ", flg).Run()
 }
