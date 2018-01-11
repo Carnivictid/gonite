@@ -22,13 +22,13 @@ func main() {
 		//spin off each one so downloads happen concurrently
 		go gonite.DownloadFile(p, downloads)
 	}
-
 	//As values come into the downloads channel, they start downloading.
 	//This blocks until a value is received, so installs happen
 	//in the order in which they finished downloading.
-	for i := range downloads{
-		RunExe(i.Exe, i.Flg)
-		log.Printf("%v has finished installing.", i.Exe)
+	for i := 0; i < len(pkgs); i++ {
+		e := <- downloads
+		RunExe(e.Exe, e.Flg)
+		log.Printf("%v has finished installing.", e.Exe)
 	}
 }
 
