@@ -16,31 +16,33 @@ type Pkg struct {
     Flg string `json:"flg"`
 }
 
-
 //a little better practice than inline strings
 const exeDir string = "C:/temp/"
-const fExtension string = ".exe"
+const fileExt string = ".exe"
 
 
 func GetPkgsFromJson() []Pkg {
 	raw, err := ioutil.ReadFile("./bin/squires.json")
 	if err != nil {
+		log.Fatal(err) // TODO add code to download json from git repo
+	}
+
+	var c []Pkg
+	err = json.Unmarshal(raw, &c)
+	if err != nil {
 		log.Fatal(err)
 	}
-	var c []Pkg
-	json.Unmarshal(raw, &c)
 	return c
 }
 
-//Here were going to pass it the package and a channel to report to once its downloaded.
+// Pass it the package and a channel to report to once its downloaded.
 func DownloadFile(pack Pkg, downloads chan Pkg) {
-	//first time I ran it, crashed because the file path didn't exist.
-	//so let's check if dir exists, if not, create it.
+	// check if download dir exists, create it if not
 	if _, err := os.Stat(exeDir); os.IsNotExist(err) {
-    os.Mkdir(exeDir, 0777)
-  }
+		os.Mkdir(exeDir, 0777)
+	}
 	// create a blank file named "filename"
-	out, err := os.Create(exeDir + pack.Exe + fExtension)
+	out, err := os.Create(exeDir + pack.Exe + fileExt)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,8 +66,9 @@ func DownloadFile(pack Pkg, downloads chan Pkg) {
 }
 
 func RunExe(exe string, flg string) {
-	os.Chdir(exeDir) // gotta be a better way to do this
-	err := exec.Command(exe + fExtension, flg).Run()
+	os.Chdir(exeDir) // TODO gotta be a better way to do this
+
+	err := exec.Command(exe + fileExt, flg).Run()
 	if err != nil {
 		log.Fatal(err)
 	}
