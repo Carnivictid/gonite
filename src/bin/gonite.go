@@ -11,17 +11,20 @@ import (
 )
 
 type Pkg struct {
+	// Contains the filename, download location, and any cmd flags
+	// needed to make sure the install runs correctly.
     Exe string `json:"exe"`
     Url string `json:"url"`
     Flg string `json:"flg"`
 }
 
-//a little better practice than inline strings
+// constants containing file structure information
 const exeDir string = "C:/temp/"
 const fileExt string = ".exe"
 
 
 func GetPkgsFromJson() []Pkg {
+	// this function returns an array of Pkg structs.
 	raw, err := ioutil.ReadFile("./bin/squires.json")
 	if err != nil {
 		log.Fatal(err) // TODO add code to download json from git repo
@@ -61,8 +64,8 @@ func DownloadFile(pack Pkg, downloads chan Pkg) {
 		log.Fatal(err)
 	}
 	//send the package to downloads channel, indicating its done dowloading
+	defer log.Printf("%v has finished downloading.", pack.Exe)
 	downloads <- pack
-	log.Printf("%v has finished downloading.", pack.Exe)
 }
 
 func RunExe(exe string, flg string) {
